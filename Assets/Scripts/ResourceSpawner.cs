@@ -55,6 +55,7 @@ public class ResourceSpawner : MonoBehaviour
     private void DestroyResource(Resource resource)
     {
         resource.Deactivated -= OnResourceDeactivated;
+        Destroy(resource.gameObject);
     }
 
     private void OnResourceDeactivated(Resource resource)
