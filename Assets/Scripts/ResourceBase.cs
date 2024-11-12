@@ -1,16 +1,27 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 
-public class ResourceBase : MonoBehaviour
+[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(ResourceStorage))]
+public class ResourceBase : MonoBehaviour, IColliderOwner
 {
-    [SerializeField, Min(0)] private int _resources;
     [SerializeField] private ResourceLocator _resourceLocator;
-    [SerializeField] private TextMeshPro _resourcesCountText;
     [SerializeField] private List<ResourceCollector> _resourceCollectors;
 
     private readonly List<Resource> _assignedResources = new();
+
+    private Collider _collider;
+    private ResourceStorage _resourceStorage;
+
+    public Collider Collider => _collider;
+
+    private void Awake()
+    {
+        _collider = GetComponent<Collider>();
+        _resourceStorage = GetComponent<ResourceStorage>();
+    }
 
     private void OnEnable()
     {
@@ -24,10 +35,8 @@ public class ResourceBase : MonoBehaviour
 
     public void Collect(Resource resource)
     {
-        _resources += resource.Value;
-        _resourcesCountText.text = _resources.ToString();
-        resource.Deactivate();
         _assignedResources.Remove(resource);
+        _resourceStorage.AddResource(resource);
     }
 
     private void OnResourceLocated(Resource resource)

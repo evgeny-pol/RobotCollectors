@@ -21,7 +21,7 @@ public class ResourceSpawner : MonoBehaviour
 
     private void Awake()
     {
-        _resourcePool = new ObjectPool<Resource>(CreateResource, ActionOnGet, ActionOnRelease, DestroyResource);
+        _resourcePool = new ObjectPool<Resource>(CreateResource, GetResource, ReleaseResource, DestroyResource);
     }
 
     private void OnEnable()
@@ -41,13 +41,13 @@ public class ResourceSpawner : MonoBehaviour
         return resource;
     }
 
-    private void ActionOnGet(Resource resource)
+    private void GetResource(Resource resource)
     {
         resource.gameObject.SetActive(true);
         resource.PlaySpawnEffects();
     }
 
-    private void ActionOnRelease(Resource resource)
+    private void ReleaseResource(Resource resource)
     {
         resource.gameObject.SetActive(false);
     }

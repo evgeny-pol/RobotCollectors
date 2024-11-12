@@ -3,20 +3,25 @@ using UnityEngine;
 using UnityEngine.Animations;
 
 [RequireComponent(typeof(ParentConstraint))]
-public class Resource : MonoBehaviour
+[RequireComponent(typeof(Collider))]
+public class Resource : MonoBehaviour, IColliderOwner
 {
     [SerializeField, Min(0)] private int _value = 1;
     [SerializeField] private ParticleSystem _particleSystem;
 
     private ParentConstraint _parentConstraint;
+    private Collider _collider;
 
     public event Action<Resource> Deactivated;
 
     public int Value => _value;
 
+    public Collider Collider => _collider;
+
     private void Awake()
     {
         _parentConstraint = GetComponent<ParentConstraint>();
+        _collider = GetComponent<Collider>();
     }
 
     public void PlaySpawnEffects()
