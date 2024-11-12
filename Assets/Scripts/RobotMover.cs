@@ -40,7 +40,7 @@ public class RobotMover : MonoBehaviour
                 transform.Translate(moveSpeed * Time.fixedDeltaTime * toTargetPosition, Space.World);
             }
 
-            yield return CoroutineUtils.WaitForFixedUpdate;
+            yield return null;
         }
 
         _animator.StopWalking();
