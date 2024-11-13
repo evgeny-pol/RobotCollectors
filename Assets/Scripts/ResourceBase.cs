@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class ResourceBase : MonoBehaviour, IColliderOwner
     [SerializeField] private ResourceLocator _resourceLocator;
     [SerializeField] private List<ResourceCollector> _resourceCollectors;
 
+    private readonly List<Resource> _unassignedResources = new();
     private readonly List<Resource> _assignedResources = new();
 
     private Collider _collider;
@@ -26,14 +28,26 @@ public class ResourceBase : MonoBehaviour, IColliderOwner
     private void OnEnable()
     {
         _resourceLocator.ResourceLocated += OnResourceLocated;
+
+        foreach (ResourceCollector resourceCollector in _resourceCollectors)
+        {
+            resourceCollector.ResourceDelivered += OnResourceCollected;
+            resourceCollector.BecameIdle += OnCollectorIdle;
+        }
     }
 
     private void OnDisable()
     {
         _resourceLocator.ResourceLocated -= OnResourceLocated;
+
+        foreach (ResourceCollector resourceCollector in _resourceCollectors)
+        {
+            resourceCollector.ResourceDelivered -= OnResourceCollected;
+            resourceCollector.BecameIdle -= OnCollectorIdle;
+        }
     }
 
-    public void Collect(Resource resource)
+    public void OnResourceCollected(Resource resource)
     {
         _assignedResources.Remove(resource);
         _resourceStorage.AddResource(resource);
@@ -41,17 +55,35 @@ public class ResourceBase : MonoBehaviour, IColliderOwner
 
     private void OnResourceLocated(Resource resource)
     {
-        if (_assignedResources.Contains(resource))
+        if (_unassignedResources.Contains(resource) || _assignedResources.Contains(resource))
             return;
 
-        ResourceCollector freeCollector = _resourceCollectors.Where(collector => collector.IsIdle)
-            .OrderBy(collector => (resource.transform.position - collector.transform.position).sqrMagnitude)
+        _unassignedResources.Add(resource);
+        ResourceCollector resourceCollector = _resourceCollectors.Where(collector => collector.IsIdle)
+            .OrderBy(collector => collector.transform.SquaredDistanceTo(resource.transform))
             .FirstOrDefault();
 
-        if (freeCollector == null)
+        if (resourceCollector == null)
             return;
 
-        freeCollector.Collect(resource, this);
+        CollectResource(resourceCollector, resource);
+    }
+
+    private void OnCollectorIdle(ResourceCollector resourceCollector)
+    {
+        if (_unassignedResources.Count == 0)
+            return;
+
+        Resource resource = _unassignedResources.OrderBy(resource => resource.transform.SquaredDistanceTo(resourceCollector.transform))
+            .First();
+
+        CollectResource(resourceCollector, resource);
+    }
+
+    private void CollectResource(ResourceCollector resourceCollector, Resource resource)
+    {
+        resourceCollector.Collect(resource, this);
+        _unassignedResources.Remove(resource);
         _assignedResources.Add(resource);
     }
 }

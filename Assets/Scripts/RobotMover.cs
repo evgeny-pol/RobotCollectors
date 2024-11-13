@@ -5,7 +5,7 @@ public class RobotMover : MonoBehaviour
 {
     [SerializeField, Min(0)] private float _moveSpeed = 5;
     [SerializeField, Min(0)] private float _rotationSpeed = 90;
-    [SerializeField] RobotAnimator _animator;
+    [SerializeField] private RobotAnimator _animator;
 
     private IColliderOwner _targetColliderOwner;
 

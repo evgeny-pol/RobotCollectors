@@ -728,9 +728,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dece2e6ed3a5a644bf9a50046dfacb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _countMax: 5
+  _countMax: 10
   _spawnAreaSize: 50
-  _spawnInterval: 5
+  _spawnInterval: 2
   _checkEmptyRadius: 3
   _checkEmptyLayers:
     serializedVersion: 2

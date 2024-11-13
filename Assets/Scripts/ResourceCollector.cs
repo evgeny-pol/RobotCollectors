@@ -1,15 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(RobotMover))]
 public class ResourceCollector : MonoBehaviour
 {
-    [SerializeField] RobotAnimator _animator;
+    [SerializeField] private RobotAnimator _animator;
     [SerializeField] private Transform _resourceAttachPoint;
 
     private Resource _targetResource;
-    private ResourceBase _targetBase;
+    private IColliderOwner _dropOffDestination;
     private RobotMover _robotMover;
+
+    public event Action<Resource> ResourceDelivered;
+    public event Action<ResourceCollector> BecameIdle;
 
     public bool IsIdle { get; private set; } = true;
 
@@ -34,10 +38,10 @@ public class ResourceCollector : MonoBehaviour
         _animator.ObjectPlaced -= OnObjectPlaced;
     }
 
-    public void Collect(Resource resource, ResourceBase resourceBase)
+    public void Collect(Resource resource, IColliderOwner destination)
     {
         _targetResource = resource;
-        _targetBase = resourceBase;
+        _dropOffDestination = destination;
         IsIdle = false;
         StartCoroutine(MoveToResource());
     }
@@ -55,14 +59,15 @@ public class ResourceCollector : MonoBehaviour
     private void OnObjectReleased()
     {
         _targetResource.Detach();
-        _targetBase.Collect(_targetResource);
+        ResourceDelivered?.Invoke(_targetResource);
+        _targetResource = null;
+        _dropOffDestination = null;
     }
 
     private void OnObjectPlaced()
     {
-        _targetResource = null;
-        _targetBase = null;
         IsIdle = true;
+        BecameIdle?.Invoke(this);
     }
 
     private IEnumerator MoveToResource()
@@ -73,7 +78,7 @@ public class ResourceCollector : MonoBehaviour
 
     private IEnumerator MoveToBase()
     {
-        yield return _robotMover.MoveToObject(_targetBase);
+        yield return _robotMover.MoveToObject(_dropOffDestination);
         _animator.PlaceDownObject();
     }
 }
