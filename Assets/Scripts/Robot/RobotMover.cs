@@ -11,8 +11,12 @@ public class RobotMover : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_targetColliderOwner != null && _targetColliderOwner.Collider == other)
-            _targetColliderOwner = null;
+        CheckDestinationReached(other);
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        CheckDestinationReached(other);
     }
 
     public IEnumerator MoveToObject(IColliderOwner targetObject)
@@ -44,5 +48,11 @@ public class RobotMover : MonoBehaviour
         }
 
         _animator.StopWalking();
+    }
+
+    private void CheckDestinationReached(Collider other)
+    {
+        if (_targetColliderOwner != null && _targetColliderOwner.Collider == other)
+            _targetColliderOwner = null;
     }
 }

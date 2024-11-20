@@ -1,29 +1,20 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraMover : MonoBehaviour
 {
-    [SerializeField, Min(0)] private float _moveSensitivity = 1;
+    [Tooltip("Максимальная дистанция отдаления от центра сцены по горизонтали.")]
+    [SerializeField, Min(0)] private float _maxDistance = 100;
 
-    private PlayerInput _playerInput;
-
-    private void Awake()
+    public void Move(Vector3 movement)
     {
-        _playerInput = new PlayerInput();
+        Vector3 newPosition = transform.position + movement;
+        newPosition.x = ClampDistance(newPosition.x);
+        newPosition.z = ClampDistance(newPosition.z);
+        transform.position = newPosition;
     }
 
-    private void OnEnable()
+    private float ClampDistance(float distance)
     {
-        _playerInput.Enable();
-    }
-
-    private void OnDisable()
-    {
-        _playerInput.Disable();
-    }
-
-    private void Update()
-    {
-        Vector2 movement = _moveSensitivity * Time.deltaTime * _playerInput.Camera.CameraMovement.ReadValue<Vector2>();
-        transform.Translate(movement.x, 0, movement.y, Space.World);
+        return Mathf.Clamp(distance, -_maxDistance, _maxDistance);
     }
 }

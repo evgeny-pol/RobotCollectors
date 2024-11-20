@@ -2,13 +2,40 @@
     "name": "GameControls",
     "maps": [
         {
-            "name": "Camera",
+            "name": "Game",
             "id": "4643dd20-81d5-4517-ba73-bb8a542acfae",
             "actions": [
                 {
                     "name": "CameraMovement",
                     "type": "Value",
                     "id": "833e97c5-47b4-4b96-ba3e-6e67716ef657",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "d42cbb09-574b-41bb-9953-18a90ddc922a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Order",
+                    "type": "Button",
+                    "id": "d240ff6f-d23a-4d9b-b632-1f8ab8f45a7b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "f57ec390-990e-427e-a9e4-ef60e8e4832e",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -70,6 +97,39 @@
                     "action": "CameraMovement",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "51bdbfdb-da05-42e8-84de-ab7252cda958",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "349783e4-93cc-41f8-b913-562a0e4f8f24",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Order",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3c666506-e288-4564-a36c-b930ca8e2737",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

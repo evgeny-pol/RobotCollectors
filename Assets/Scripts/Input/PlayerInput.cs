@@ -24,13 +24,40 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     ""name"": ""GameControls"",
     ""maps"": [
         {
-            ""name"": ""Camera"",
+            ""name"": ""Game"",
             ""id"": ""4643dd20-81d5-4517-ba73-bb8a542acfae"",
             ""actions"": [
                 {
                     ""name"": ""CameraMovement"",
                     ""type"": ""Value"",
                     ""id"": ""833e97c5-47b4-4b96-ba3e-6e67716ef657"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""d42cbb09-574b-41bb-9953-18a90ddc922a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Order"",
+                    ""type"": ""Button"",
+                    ""id"": ""d240ff6f-d23a-4d9b-b632-1f8ab8f45a7b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MousePosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""f57ec390-990e-427e-a9e4-ef60e8e4832e"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -92,15 +119,51 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""CameraMovement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""51bdbfdb-da05-42e8-84de-ab7252cda958"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""349783e4-93cc-41f8-b913-562a0e4f8f24"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Order"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3c666506-e288-4564-a36c-b930ca8e2737"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MousePosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
     ],
     ""controlSchemes"": []
 }");
-        // Camera
-        m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
-        m_Camera_CameraMovement = m_Camera.FindAction("CameraMovement", throwIfNotFound: true);
+        // Game
+        m_Game = asset.FindActionMap("Game", throwIfNotFound: true);
+        m_Game_CameraMovement = m_Game.FindAction("CameraMovement", throwIfNotFound: true);
+        m_Game_Select = m_Game.FindAction("Select", throwIfNotFound: true);
+        m_Game_Order = m_Game.FindAction("Order", throwIfNotFound: true);
+        m_Game_MousePosition = m_Game.FindAction("MousePosition", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -159,53 +222,80 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // Camera
-    private readonly InputActionMap m_Camera;
-    private List<ICameraActions> m_CameraActionsCallbackInterfaces = new List<ICameraActions>();
-    private readonly InputAction m_Camera_CameraMovement;
-    public struct CameraActions
+    // Game
+    private readonly InputActionMap m_Game;
+    private List<IGameActions> m_GameActionsCallbackInterfaces = new List<IGameActions>();
+    private readonly InputAction m_Game_CameraMovement;
+    private readonly InputAction m_Game_Select;
+    private readonly InputAction m_Game_Order;
+    private readonly InputAction m_Game_MousePosition;
+    public struct GameActions
     {
         private @PlayerInput m_Wrapper;
-        public CameraActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @CameraMovement => m_Wrapper.m_Camera_CameraMovement;
-        public InputActionMap Get() { return m_Wrapper.m_Camera; }
+        public GameActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @CameraMovement => m_Wrapper.m_Game_CameraMovement;
+        public InputAction @Select => m_Wrapper.m_Game_Select;
+        public InputAction @Order => m_Wrapper.m_Game_Order;
+        public InputAction @MousePosition => m_Wrapper.m_Game_MousePosition;
+        public InputActionMap Get() { return m_Wrapper.m_Game; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(CameraActions set) { return set.Get(); }
-        public void AddCallbacks(ICameraActions instance)
+        public static implicit operator InputActionMap(GameActions set) { return set.Get(); }
+        public void AddCallbacks(IGameActions instance)
         {
-            if (instance == null || m_Wrapper.m_CameraActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_CameraActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_GameActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_GameActionsCallbackInterfaces.Add(instance);
             @CameraMovement.started += instance.OnCameraMovement;
             @CameraMovement.performed += instance.OnCameraMovement;
             @CameraMovement.canceled += instance.OnCameraMovement;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
+            @Order.started += instance.OnOrder;
+            @Order.performed += instance.OnOrder;
+            @Order.canceled += instance.OnOrder;
+            @MousePosition.started += instance.OnMousePosition;
+            @MousePosition.performed += instance.OnMousePosition;
+            @MousePosition.canceled += instance.OnMousePosition;
         }
 
-        private void UnregisterCallbacks(ICameraActions instance)
+        private void UnregisterCallbacks(IGameActions instance)
         {
             @CameraMovement.started -= instance.OnCameraMovement;
             @CameraMovement.performed -= instance.OnCameraMovement;
             @CameraMovement.canceled -= instance.OnCameraMovement;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
+            @Order.started -= instance.OnOrder;
+            @Order.performed -= instance.OnOrder;
+            @Order.canceled -= instance.OnOrder;
+            @MousePosition.started -= instance.OnMousePosition;
+            @MousePosition.performed -= instance.OnMousePosition;
+            @MousePosition.canceled -= instance.OnMousePosition;
         }
 
-        public void RemoveCallbacks(ICameraActions instance)
+        public void RemoveCallbacks(IGameActions instance)
         {
-            if (m_Wrapper.m_CameraActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_GameActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
-        public void SetCallbacks(ICameraActions instance)
+        public void SetCallbacks(IGameActions instance)
         {
-            foreach (var item in m_Wrapper.m_CameraActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_GameActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_CameraActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_GameActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
-    public CameraActions @Camera => new CameraActions(this);
-    public interface ICameraActions
+    public GameActions @Game => new GameActions(this);
+    public interface IGameActions
     {
         void OnCameraMovement(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
+        void OnOrder(InputAction.CallbackContext context);
+        void OnMousePosition(InputAction.CallbackContext context);
     }
 }

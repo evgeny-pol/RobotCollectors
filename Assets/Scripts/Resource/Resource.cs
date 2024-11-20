@@ -7,7 +7,7 @@ using UnityEngine.Animations;
 public class Resource : MonoBehaviour, IColliderOwner
 {
     [SerializeField, Min(0)] private int _value = 1;
-    [SerializeField] private ParticleSystem _particleSystem;
+    [SerializeField] private ParticleSystem _spawnParticles;
 
     private ParentConstraint _parentConstraint;
     private Collider _collider;
@@ -26,7 +26,7 @@ public class Resource : MonoBehaviour, IColliderOwner
 
     public void PlaySpawnEffects()
     {
-        _particleSystem.Play();
+        _spawnParticles.Play();
     }
 
     public void Attach(Transform target)
