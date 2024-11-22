@@ -10,18 +10,17 @@ public class Resource : MonoBehaviour, IColliderOwner
     [SerializeField] private ParticleSystem _spawnParticles;
 
     private ParentConstraint _parentConstraint;
-    private Collider _collider;
 
     public event Action<Resource> Deactivated;
 
     public int Value => _value;
 
-    public Collider Collider => _collider;
+    public Collider Collider { get; private set; }
 
     private void Awake()
     {
         _parentConstraint = GetComponent<ParentConstraint>();
-        _collider = GetComponent<Collider>();
+        Collider = GetComponent<Collider>();
     }
 
     public void PlaySpawnEffects()

@@ -3,12 +3,10 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class BuildingPlan : MonoBehaviour, IColliderOwner
 {
-    private Collider _collider;
-
-    public Collider Collider => _collider;
+    public Collider Collider { get; private set; }
 
     private void Awake()
     {
-        _collider = GetComponent<Collider>();
+        Collider = GetComponent<Collider>();
     }
 }

@@ -36,22 +36,22 @@ public class RobotAnimator : MonoBehaviour
         _animator.SetTrigger(AnimatorParams.PlaceDownObject);
     }
 
-    public void OnObjectGrabbed()
+    public void HandleObjectGrabbed()
     {
         ObjectGrabbed?.Invoke();
     }
 
-    public void OnObjectPicked()
+    public void HandleObjectPicked()
     {
         ObjectPicked?.Invoke();
     }
 
-    public void OnObjectReleased()
+    public void HandleObjectReleased()
     {
         ObjectReleased?.Invoke();
     }
 
-    public void OnObjectPlaced()
+    public void HandleObjectPlaced()
     {
         ObjectPlaced?.Invoke();
     }

@@ -208,14 +208,14 @@ ModelImporter:
       curves: []
       events:
       - time: 0.6859579
-        functionName: OnObjectReleased
+        functionName: HandleObjectReleased
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.9999053
-        functionName: OnObjectPlaced
+        functionName: HandleObjectPlaced
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -251,14 +251,14 @@ ModelImporter:
       curves: []
       events:
       - time: 0.33166108
-        functionName: OnObjectGrabbed
+        functionName: HandleObjectGrabbed
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.99999964
-        functionName: OnObjectPicked
+        functionName: HandleObjectPicked
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

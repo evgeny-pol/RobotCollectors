@@ -10,6 +10,8 @@ public class ResourceBase : Building, IColliderOwner, ISelectable
 {
     [SerializeField, Min(1)] private int _workerCost = 3;
     [SerializeField, Min(1)] private int _newBaseCost = 5;
+    [Tooltip("Минимальное количество рабочих необходимое для заказа новой базы.")]
+    [SerializeField, Min(0)] private int _newBaseMinWorkersCount = 2;
     [SerializeField] private Transform _unitSpawnPoint;
     [SerializeField] private Worker _workerPrefab;
     [SerializeField] private ResourceLocator _resourceLocator;
@@ -20,7 +22,6 @@ public class ResourceBase : Building, IColliderOwner, ISelectable
 
     private BuildingPlan _newBasePlan;
     private Worker _newBaseBuilder;
-    private Collider _collider;
     private ResourceStorage _resourceStorage;
 
     public event Action<Resource> ResourceLocated;
@@ -29,11 +30,11 @@ public class ResourceBase : Building, IColliderOwner, ISelectable
     public event Action<ResourceBase> ResourceBaseBuilt;
     public event Action<Vector3?> OrderPositionChanged;
 
-    public Collider Collider => _collider;
+    public Collider Collider { get; private set; }
 
     private void Awake()
     {
-        _collider = GetComponent<Collider>();
+        Collider = GetComponent<Collider>();
         _resourceStorage = GetComponent<ResourceStorage>();
     }
 
@@ -53,17 +54,18 @@ public class ResourceBase : Building, IColliderOwner, ISelectable
             UnsubscribeFromEvents(worker);
     }
 
-    public bool HasIdleWorkers() => GetIdleWorkers().Any();
+    public bool HasIdleWorkers() =>
+        GetIdleWorkers().Any();
 
     public bool TryOrder(Vector3 targetPosition, out string errorMessage)
     {
-        if (_workers.Count < 2)
+        if (_workers.Count < _newBaseMinWorkersCount)
         {
             errorMessage = Texts.NotEnoughWorkersForNewBase;
             return false;
         }
 
-        Bounds colliderBounds = _collider.bounds;
+        Bounds colliderBounds = Collider.bounds;
         Vector3 targetOffset = targetPosition - transform.position;
         Vector3 newColliderCenter = colliderBounds.center + targetOffset;
 
@@ -195,11 +197,14 @@ public class ResourceBase : Building, IColliderOwner, ISelectable
         }
     }
 
-    private IEnumerable<Worker> GetIdleWorkers() => _workers.Where(worker => worker.IsIdle);
+    private IEnumerable<Worker> GetIdleWorkers() =>
+        _workers.Where(worker => worker.IsIdle);
 
-    private Worker TryGetIdleWorker() => GetIdleWorkers().FirstOrDefault();
+    private Worker TryGetIdleWorker() =>
+        GetIdleWorkers().FirstOrDefault();
 
-    private Worker GetClosestIdleWorker(Vector3 position) => GetIdleWorkers()
+    private Worker GetClosestIdleWorker(Vector3 position) =>
+        GetIdleWorkers()
         .OrderBy(worker => worker.transform.position.SquaredDistanceTo(position))
         .First();
 }

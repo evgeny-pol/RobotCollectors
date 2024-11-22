@@ -56,7 +56,9 @@ public class PlayerInputHandler : MonoBehaviour
             }
         }
         else
+        {
             Deselect();
+        }
     }
 
     private void OnOrderPerformed(InputAction.CallbackContext context)
